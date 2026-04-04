@@ -1,0 +1,18 @@
+[project]
+name = "UseState"
+dynamic = ["version"]
+description = "UseState"
+readme = "README.md"
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/jb2170/UseState/"
+
+[tool.setuptools.dynamic]
+version = {attr = "UseState.__version__"}
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
