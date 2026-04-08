@@ -1,9 +1,10 @@
 .PHONY: all
 all:
 
+.PHONY: venv
 venv:
-	python -m venv venv
-	./venv/bin/pip install -e .
+	  /usr/bin/python -m venv venv
+	./venv/bin/python -m pip install -e .
 
 .PHONY: build
 build:
