@@ -1,7 +1,7 @@
 [project]
 name = "UseState"
 dynamic = ["version"]
-description = "UseState"
+description = "Library for creating a dependency graph of cached properties"
 readme = "README.md"
 license = "GPL-3.0-only"
 license-files = ["LICENSE"]

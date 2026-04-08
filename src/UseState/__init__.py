@@ -1,5 +1,7 @@
 """
 UseState
+
+Library for creating a dependency graph of cached properties
 """
 
 __version__ = "0.0.1"
