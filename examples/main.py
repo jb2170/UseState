@@ -11,12 +11,12 @@ class Cylinder:
 
     @use_state()
     def radius(self) -> float:
-        # Default radius
+        print("Calculating default radius")
         return 0.0
 
     @use_state()
     def height(self) -> float:
-        # Default height
+        print("Calculating default height")
         return 0.0
 
     @use_lazy_generated_state({"radius"})
