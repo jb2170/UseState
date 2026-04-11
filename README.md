@@ -1,6 +1,6 @@
 # UseState
 
-Wrap your class's instance methods with `@use_state` and `@use_lazy_generated_state` to create a dependency graph of cached properties that only regenerate when their dependencies change.
+Wrap your class's instance methods with `@use_state`, `@use_property`, and `@use_lazy_generated_state` to create a dependency graph of cached properties that only regenerate when their dependencies change.
 
 Uses Python's [data descriptors](https://docs.python.org/3/howto/descriptor.html) to proxy (to the graph) access of properties. Graph nodes are stored on the instances of classes that use the decorators, for sane garbage collection sake.
 
@@ -21,12 +21,17 @@ See [examples](./examples/) folder
 
 import math
 
-from UseState import use_state, use_lazy_generated_state
+from UseState import use_state, use_property, use_lazy_generated_state
 
 class Cylinder:
     def __init__(self, radius: float, height: float) -> None:
         self.radius = radius
         self.height = height
+
+    @use_property()
+    def color(self) -> int:
+        print("Calculating default color")
+        return "yellow"
 
     @use_state()
     def radius(self) -> float:

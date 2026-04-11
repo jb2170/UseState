@@ -2,12 +2,17 @@
 
 import math
 
-from UseState import use_state, use_lazy_generated_state
+from UseState import use_state, use_property, use_lazy_generated_state
 
 class Cylinder:
     def __init__(self, radius: float, height: float) -> None:
         self.radius = radius
         self.height = height
+
+    @use_property()
+    def color(self) -> int:
+        print("Calculating default color")
+        return "yellow"
 
     @use_state()
     def radius(self) -> float:
