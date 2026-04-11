@@ -23,6 +23,12 @@ class UseStateNode(BaseStorageNode):
 class UseState(BaseStorageDescriptor):
     """
     UseState allows manual getting and setting of its value.
+
+    Setting the value manually marks the UseState as up to date.
+
+    If one tries to get the value when the UseState is out of date, eg before
+    one has manually assigned a value to the UseState, or because a dependency
+    has been changed, then the function is called to generate a default value.
     """
 
     node_class = UseStateNode
@@ -32,8 +38,8 @@ class UseState(BaseStorageDescriptor):
 
 class use_state(base_descriptor_decorator):
     """
-    Decorator to wrap the function that returns the initial value to be
-    stored in the UseState node.
+    Decorator to wrap the function that returns the default value to be
+    stored in the UseState node if one does not manually assign a value.
     """
 
     descriptor_class = UseState
