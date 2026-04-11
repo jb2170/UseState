@@ -29,7 +29,11 @@ class BaseNode:
         self.dependants: set[BaseNode] = set()
 
         # Aka the dirty bit.
-        self.is_out_of_date: bool = self._is_initially_out_of_date()
+        self._is_out_of_date: bool = self._is_initially_out_of_date()
+
+    @property
+    def is_out_of_date(self) -> bool:
+        return self._is_out_of_date
 
     def add_dependency(self, dependency: BaseNode) -> None:
         self._add_dependency(dependency)
@@ -62,10 +66,10 @@ class BaseNode:
         return True
 
     def set_out_of_date(self, *, and_dependants: bool = True) -> None:
-        if self.is_out_of_date:
+        if self._is_out_of_date:
             return
 
-        self.is_out_of_date = True
+        self._is_out_of_date = True
 
         if and_dependants:
             self._set_dependants_out_of_date()
@@ -75,12 +79,12 @@ class BaseNode:
             dependant.set_out_of_date()
 
     def ensure_up_to_date(self) -> None:
-        if not self.is_out_of_date:
+        if not self._is_out_of_date:
             return
 
         self._ensure_dependencies_up_to_date()
         self._make_up_to_date()
-        self.is_out_of_date = False
+        self._is_out_of_date = False
 
     def _ensure_dependencies_up_to_date(self) -> None:
         for dependency in self.dependencies:

@@ -17,7 +17,7 @@ class UseStateNode(BaseStorageNode):
             return
 
         self._value = new_value
-        self.is_out_of_date = False
+        self._is_out_of_date = False
         self._set_dependants_out_of_date()
 
 class UseState(BaseStorageDescriptor):
