@@ -8,14 +8,8 @@ __all__ = [
 ]
 
 class UseStateNode(BaseStorageNode):
-    def _is_initially_out_of_date(self):
-        # UseState is never intended to be out of date.
-        # Even if somehow set_out_of_date() gets called
-        # the default _make_up_to_date() does nothing.
-        return False
-
-    def _create_initial_value(self):
-        return self.primary_method()
+    def _make_up_to_date(self):
+        self._value = self.primary_method()
 
     @BaseStorageNode.value.setter
     def value(self, new_value) -> None:
@@ -23,6 +17,7 @@ class UseStateNode(BaseStorageNode):
             return
 
         self._value = new_value
+        self.is_out_of_date = False
         self._set_dependants_out_of_date()
 
 class UseState(BaseStorageDescriptor):
