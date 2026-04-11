@@ -10,4 +10,5 @@ from .Base import *
 from .BaseStorage import *
 
 from .UseState import *
+from .UseProperty import *
 from .UseLazyGeneratedState import *
