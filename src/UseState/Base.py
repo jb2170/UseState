@@ -106,9 +106,15 @@ class BaseDescriptor:
 
         self.primary_method                 = primary_method
         self.default_dependencies: set[str] = default_dependencies.copy()
+        self._name = None
+
+    @property
+    def name(self) -> str:
+        """Name of attribute this descriptor is assigned to"""
+        return self._name
 
     def __set_name__(self, owner, name) -> None:
-        self.name = name
+        self._name = name
 
     def __get__(self, instance, owner):
         if instance is None:
@@ -163,10 +169,10 @@ class BaseDescriptor:
         return ret
 
     def touch_own_node(self, instance) -> BaseNode:
-        node = self._get_node_by_name(instance, self.name)
+        node = self._get_node_by_name(instance, self._name)
         if node is None:
             node = self._create_new_node(instance)
-            self._set_node_by_name(instance, self.name, node)
+            self._set_node_by_name(instance, self._name, node)
 
         return node
 
