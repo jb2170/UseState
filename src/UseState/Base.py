@@ -28,7 +28,7 @@ class BaseNode:
         # Nodes that depend on this one.
         # Aka 'children'
         # Use WeakSet to allow children to be garbage collected
-        self.dependants: set[BaseNode] = WeakSet()
+        self.dependants: WeakSet[BaseNode] = WeakSet()
 
         # Aka the dirty bit.
         self._is_out_of_date: bool = False
