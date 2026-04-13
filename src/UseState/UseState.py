@@ -30,7 +30,7 @@ class UseState(UseLazyGeneratedState):
     node_class = UseStateNode
 
     def set(self, instance, value):
-        self.touch_own_node(instance).value = value
+        self.touch_node(instance).value = value
 
 class use_state(use_lazy_generated_state):
     """

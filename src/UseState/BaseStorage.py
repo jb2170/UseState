@@ -24,7 +24,7 @@ class BaseStorageDescriptor(BaseDescriptor):
     node_class = BaseStorageNode
 
     def get(self, instance, owner):
-        return self.touch_own_node(instance).value
+        return self.touch_node(instance).value
 
     def set(self, instance, value):
         raise AttributeError(f"Cannot set read-only {self.__class__.__name__} property {self._name!r}")

@@ -162,13 +162,13 @@ class BaseDescriptor:
         for dependency_name in self.default_dependencies:
             # Ensure the dependency node is initialized on the instance
             descriptor = getattr(instance.__class__, dependency_name)
-            dependency_node = descriptor.touch_own_node(instance)
+            dependency_node = descriptor.touch_node(instance)
 
             ret.add_dependency(dependency_node)
 
         return ret
 
-    def touch_own_node(self, instance) -> BaseNode:
+    def touch_node(self, instance) -> BaseNode:
         node = self._get_node_by_name(instance, self._name)
         if node is None:
             node = self._create_new_node(instance)
