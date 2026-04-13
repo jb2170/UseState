@@ -31,7 +31,10 @@ class BaseNode:
         self.dependants: set[BaseNode] = WeakSet()
 
         # Aka the dirty bit.
-        self._is_out_of_date: bool = self._is_initially_out_of_date()
+        self._is_out_of_date: bool = False
+
+        if self._is_initially_out_of_date():
+            self.set_out_of_date()
 
     @property
     def is_out_of_date(self) -> bool:
