@@ -138,8 +138,12 @@ class BaseDescriptor:
         instance.__dict__[self._name_to_node_name(name)] = node
 
     def _create_new_node_only(self, instance) -> BaseNode:
+        primary_method = self.primary_method
+        if primary_method is not None:
+            primary_method = functools.partial(primary_method, instance)
+
         return self.node_class(
-            functools.partial(self.primary_method, self = instance),
+            primary_method = primary_method,
         )
 
     def _create_new_node(self, instance) -> BaseNode:
