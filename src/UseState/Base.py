@@ -1,4 +1,5 @@
 import functools
+from weakref import WeakSet
 
 __all__ = [
     "BaseNode",
@@ -26,7 +27,8 @@ class BaseNode:
 
         # Nodes that depend on this one.
         # Aka 'children'
-        self.dependants: set[BaseNode] = set()
+        # Use WeakSet to allow children to be garbage collected
+        self.dependants: set[BaseNode] = WeakSet()
 
         # Aka the dirty bit.
         self._is_out_of_date: bool = self._is_initially_out_of_date()
