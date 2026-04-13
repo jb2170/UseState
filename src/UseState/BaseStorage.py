@@ -6,8 +6,15 @@ __all__ = [
 ]
 
 class BaseStorageNode(BaseNode):
-    def __init__(self, primary_method, dependencies = None) -> None:
-        super().__init__(primary_method = primary_method, dependencies = dependencies)
+    def __init__(
+        self, *,
+        dependencies: set[BaseNode] | None = None,
+        primary_method = None,
+    ) -> None:
+        super().__init__(
+            dependencies = dependencies,
+            primary_method = primary_method,
+        )
 
         self._value = self._create_initial_value()
 

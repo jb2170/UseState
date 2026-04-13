@@ -9,17 +9,12 @@ __all__ = [
 
 class BaseNode:
     def __init__(
-        self,
-        primary_method,
-        dependencies: set[BaseNode] | None = None
+        self, *,
+        dependencies: set[BaseNode] | None = None,
+        primary_method = None,
     ) -> None:
         if dependencies is None:
             dependencies = set()
-
-        # The main method that the decorators wrap.
-        # In the future we may have descriptors / nodes that use multiple functions
-        # like how there's `@property def my_prop` and `@my_prop.setter def my_prop`
-        self.primary_method = primary_method
 
         # Nodes that this one depends on.
         # Aka 'parents'
@@ -32,6 +27,11 @@ class BaseNode:
 
         # Aka the dirty bit.
         self._is_out_of_date: bool = False
+
+        # The main method that the decorators wrap.
+        # In the future we may have descriptors / nodes that use multiple functions
+        # like how there's `@property def my_prop` and `@my_prop.setter def my_prop`
+        self.primary_method = primary_method
 
         if self._is_initially_out_of_date():
             self.set_out_of_date()
@@ -102,16 +102,16 @@ class BaseDescriptor:
     node_class: type[BaseNode] = BaseNode
 
     def __init__(
-        self,
-        primary_method,
-        default_dependencies: set[str] | None = None
+        self, *,
+        default_dependencies: set[str] | None = None,
+        primary_method = None,
     ) -> None:
         if default_dependencies is None:
             default_dependencies = set()
 
-        self.primary_method                 = primary_method
-        self.default_dependencies: set[str] = default_dependencies.copy()
-        self._name = None
+        self.default_dependencies: set[str]   = default_dependencies.copy()
+        self._name:                str | None = None
+        self.primary_method                   = primary_method
 
     @property
     def name(self) -> str:
@@ -188,4 +188,7 @@ class base_descriptor_decorator:
         self.default_dependencies_names = default_dependencies_names
 
     def __call__(self, method):
-        return self.descriptor_class(method, self.default_dependencies_names)
+        return self.descriptor_class(
+            default_dependencies = self.default_dependencies_names,
+            primary_method = method,
+        )
