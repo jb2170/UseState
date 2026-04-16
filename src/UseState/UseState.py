@@ -9,7 +9,7 @@ __all__ = [
 class UseStateNode(UseLazyGeneratedStateNode):
     @UseLazyGeneratedStateNode.value.setter
     def value(self, new_value) -> None:
-        if self._value == new_value:
+        if not self._is_out_of_date and self._value == new_value:
             return
 
         self._value = new_value
