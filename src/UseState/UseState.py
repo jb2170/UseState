@@ -1,4 +1,5 @@
-from .UseLazyGeneratedState import UseLazyGeneratedStateNode, UseLazyGeneratedState, use_lazy_generated_state
+from .Base import base_descriptor_decorator
+from .BaseStorage import BaseStorageNode, BaseStorageDescriptor
 
 __all__ = [
     "UseStateNode",
@@ -6,8 +7,8 @@ __all__ = [
     "use_state",
 ]
 
-class UseStateNode(UseLazyGeneratedStateNode):
-    @UseLazyGeneratedStateNode.value.setter
+class UseStateNode(BaseStorageNode):
+    @BaseStorageNode.value.setter
     def value(self, new_value) -> None:
         old_value = self._value
 
@@ -21,7 +22,10 @@ class UseStateNode(UseLazyGeneratedStateNode):
         self._is_out_of_date = False
         self._set_dependants_out_of_date()
 
-class UseState(UseLazyGeneratedState):
+    def _make_up_to_date(self):
+        self._value = self.descriptor.primary_method(self.instance)
+
+class UseState(BaseStorageDescriptor):
     """
     UseState allows manual getting and setting of its value.
 
@@ -61,7 +65,7 @@ class UseState(UseLazyGeneratedState):
             return ret
         return wrapper
 
-class use_state(use_lazy_generated_state):
+class use_state(base_descriptor_decorator):
     """
     Decorator to wrap the function that returns the default value to be
     stored in the UseState node if one does not manually assign a value.
