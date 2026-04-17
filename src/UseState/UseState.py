@@ -58,6 +58,16 @@ class UseState(BaseStorageDescriptor):
     def set(self, instance, value):
         self.touch_node(instance).value = value
 
+    def create_default_state(self, *args, **kwargs) -> UseState:
+        def wrapper(create_default_state_method):
+            ret = self.__class__(
+                self.default_dependencies,
+                create_default_state_method = create_default_state_method,
+                setter_method = self.setter_method,
+            )
+            return ret
+        return wrapper
+
     def setter(self, *args, **kwargs) -> UseState:
         def wrapper(setter_method):
             ret = self.__class__(
