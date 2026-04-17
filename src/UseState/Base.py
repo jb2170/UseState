@@ -104,16 +104,14 @@ class BaseDescriptor:
     node_class: type[BaseNode] = BaseNode
 
     def __init__(
-        self, *,
+        self,
         default_dependencies: set[str] | None = None,
-        primary_method = None,
     ) -> None:
         if default_dependencies is None:
             default_dependencies = set()
 
         self.default_dependencies: set[str]   = default_dependencies.copy()
         self._name:                str | None = None
-        self.primary_method                   = primary_method
 
     @property
     def name(self) -> str:
@@ -186,8 +184,5 @@ class base_descriptor_decorator:
     def __init__(self, default_dependencies_names: set[str] | None = None) -> None:
         self.default_dependencies_names = default_dependencies_names
 
-    def __call__(self, method) -> BaseDescriptor:
-        return self.descriptor_class(
-            default_dependencies = self.default_dependencies_names,
-            primary_method = method,
-        )
+    def __call__(self, **kwargs) -> BaseDescriptor:
+        return self.descriptor_class(self.default_dependencies_names, **kwargs)

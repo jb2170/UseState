@@ -9,7 +9,10 @@ __all__ = [
 
 class UseLazyGeneratedStateNode(BaseStorageNode):
     def _make_up_to_date(self):
-        self._value = self.descriptor.primary_method(self.instance)
+        if self.descriptor.generate_state_method is None:
+            raise AttributeError(f"{self.descriptor.__class__.__name__} property {self.descriptor.name!r} has no 'generate_state_method'", name = None)
+
+        self._value = self.descriptor.generate_state_method(self.instance)
 
 class UseLazyGeneratedState(BaseStorageDescriptor):
     """
@@ -20,6 +23,16 @@ class UseLazyGeneratedState(BaseStorageDescriptor):
 
     node_class = UseLazyGeneratedStateNode
 
+    def __init__(
+        self,
+        default_dependencies: set[str] | None = None,
+        *,
+        generate_state_method = None,
+    ) -> None:
+        super().__init__(default_dependencies)
+
+        self.generate_state_method = generate_state_method
+
 class use_lazy_generated_state(base_descriptor_decorator):
     """
     Decorator to wrap the function that generates the value to be
@@ -28,5 +41,5 @@ class use_lazy_generated_state(base_descriptor_decorator):
 
     descriptor_class = UseLazyGeneratedState
 
-    def __call__(self, method) -> UseLazyGeneratedState:
-        return super().__call__(method)
+    def __call__(self, generate_state_method) -> UseLazyGeneratedState:
+        return super().__call__(generate_state_method = generate_state_method)

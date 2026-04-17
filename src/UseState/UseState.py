@@ -23,7 +23,12 @@ class UseStateNode(BaseStorageNode):
         self._set_dependants_out_of_date()
 
     def _make_up_to_date(self):
-        self._value = self.descriptor.primary_method(self.instance)
+        if self.descriptor.create_default_state_method is not None:
+            initial_value = self.descriptor.create_default_state_method(self.instance)
+        else:
+            initial_value = None
+
+        self._value = initial_value
 
 class UseState(BaseStorageDescriptor):
     """
@@ -39,16 +44,15 @@ class UseState(BaseStorageDescriptor):
     node_class = UseStateNode
 
     def __init__(
-        self, *,
+        self,
         default_dependencies: set[str] | None = None,
-        primary_method = None,
+        *,
+        create_default_state_method = None,
         setter_method = None,
     ) -> None:
-        super().__init__(
-            default_dependencies = default_dependencies,
-            primary_method = primary_method,
-        )
+        super().__init__(default_dependencies)
 
+        self.create_default_state_method = create_default_state_method
         self.setter_method = setter_method
 
     def set(self, instance, value):
@@ -57,11 +61,10 @@ class UseState(BaseStorageDescriptor):
     def setter(self, *args, **kwargs) -> UseState:
         def wrapper(setter_method):
             ret = self.__class__(
-                default_dependencies = self.default_dependencies,
-                primary_method = self.primary_method,
+                self.default_dependencies,
+                create_default_state_method = self.create_default_state_method,
                 setter_method = setter_method,
             )
-
             return ret
         return wrapper
 
@@ -73,5 +76,5 @@ class use_state(base_descriptor_decorator):
 
     descriptor_class = UseState
 
-    def __call__(self, method) -> UseState:
-        return super().__call__(method)
+    def __call__(self, create_default_state_method) -> UseState:
+        return super().__call__(create_default_state_method = create_default_state_method)
