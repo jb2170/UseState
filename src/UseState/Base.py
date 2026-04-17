@@ -1,4 +1,3 @@
-import functools
 from weakref import WeakSet
 
 __all__ = [
@@ -10,11 +9,19 @@ __all__ = [
 class BaseNode:
     def __init__(
         self, *,
+        descriptor: BaseDescriptor,
+        instance,
         dependencies: set[BaseNode] | None = None,
-        primary_method = None,
     ) -> None:
         if dependencies is None:
             dependencies = set()
+
+        # Store the descriptor so we can access its methods later.
+        self.descriptor = descriptor
+
+        # The instance of the class which contains the descriptor, which
+        # is also where the Node is stored.
+        self.instance = instance
 
         # Nodes that this one depends on.
         # Aka 'parents'
@@ -27,11 +34,6 @@ class BaseNode:
 
         # Aka the dirty bit.
         self._is_out_of_date: bool = False
-
-        # The main method that the decorators wrap.
-        # In the future we may have descriptors / nodes that use multiple functions
-        # like how there's `@property def my_prop` and `@my_prop.setter def my_prop`
-        self.primary_method = primary_method
 
         if self._is_initially_out_of_date():
             self.set_out_of_date()
@@ -149,12 +151,9 @@ class BaseDescriptor:
         instance.__dict__[self._name_to_node_name(name)] = node
 
     def _create_new_node_only(self, instance) -> BaseNode:
-        primary_method = self.primary_method
-        if primary_method is not None:
-            primary_method = functools.partial(primary_method, instance)
-
         return self.node_class(
-            primary_method = primary_method,
+            descriptor = self,
+            instance = instance,
         )
 
     def _create_new_node(self, instance) -> BaseNode:

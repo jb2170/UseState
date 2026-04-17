@@ -8,12 +8,14 @@ __all__ = [
 class BaseStorageNode(BaseNode):
     def __init__(
         self, *,
+        descriptor: BaseStorageDescriptor,
+        instance,
         dependencies: set[BaseNode] | None = None,
-        primary_method = None,
     ) -> None:
         super().__init__(
+            descriptor = descriptor,
+            instance = instance,
             dependencies = dependencies,
-            primary_method = primary_method,
         )
 
         self._value = self._create_initial_value()

@@ -9,7 +9,7 @@ __all__ = [
 
 class UseLazyGeneratedStateNode(BaseStorageNode):
     def _make_up_to_date(self):
-        self._value = self.primary_method()
+        self._value = self.descriptor.primary_method(self.instance)
 
 class UseLazyGeneratedState(BaseStorageDescriptor):
     """
