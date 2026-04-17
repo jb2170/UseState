@@ -9,8 +9,13 @@ __all__ = [
 class UseStateNode(UseLazyGeneratedStateNode):
     @UseLazyGeneratedStateNode.value.setter
     def value(self, new_value) -> None:
-        if not self._is_out_of_date and self._value == new_value:
+        old_value = self._value
+
+        if not self._is_out_of_date and old_value == new_value:
             return
+
+        if self.descriptor.setter_method is not None:
+            new_value = self.descriptor.setter_method(self.instance, old_value, new_value)
 
         self._value = new_value
         self._is_out_of_date = False
@@ -29,8 +34,32 @@ class UseState(UseLazyGeneratedState):
 
     node_class = UseStateNode
 
+    def __init__(
+        self, *,
+        default_dependencies: set[str] | None = None,
+        primary_method = None,
+        setter_method = None,
+    ) -> None:
+        super().__init__(
+            default_dependencies = default_dependencies,
+            primary_method = primary_method,
+        )
+
+        self.setter_method = setter_method
+
     def set(self, instance, value):
         self.touch_node(instance).value = value
+
+    def setter(self, *args, **kwargs) -> UseState:
+        def wrapper(setter_method):
+            ret = self.__class__(
+                default_dependencies = self.default_dependencies,
+                primary_method = self.primary_method,
+                setter_method = setter_method,
+            )
+
+            return ret
+        return wrapper
 
 class use_state(use_lazy_generated_state):
     """
