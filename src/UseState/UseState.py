@@ -39,3 +39,6 @@ class use_state(use_lazy_generated_state):
     """
 
     descriptor_class = UseState
+
+    def __call__(self, method) -> UseState:
+        return super().__call__(method)

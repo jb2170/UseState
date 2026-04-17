@@ -183,10 +183,10 @@ class BaseDescriptor:
 class base_descriptor_decorator:
     descriptor_class: type[BaseDescriptor] = BaseDescriptor
 
-    def __init__(self, default_dependencies_names: set[str] | None = None):
+    def __init__(self, default_dependencies_names: set[str] | None = None) -> None:
         self.default_dependencies_names = default_dependencies_names
 
-    def __call__(self, method):
+    def __call__(self, method) -> BaseDescriptor:
         return self.descriptor_class(
             default_dependencies = self.default_dependencies_names,
             primary_method = method,

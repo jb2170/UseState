@@ -27,3 +27,6 @@ class use_lazy_generated_state(base_descriptor_decorator):
     """
 
     descriptor_class = UseLazyGeneratedState
+
+    def __call__(self, method) -> UseLazyGeneratedState:
+        return super().__call__(method)

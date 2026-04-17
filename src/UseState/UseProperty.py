@@ -33,3 +33,6 @@ class use_property(use_state):
     """
 
     descriptor_class = UseProperty
+
+    def __call__(self, method) -> UseProperty:
+        return super().__call__(method)
