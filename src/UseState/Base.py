@@ -2,14 +2,13 @@ from weakref import WeakSet
 
 __all__ = [
     "BaseNode",
-    "BaseDescriptor",
-    "base_descriptor_decorator",
+    "base_descriptor",
 ]
 
 class BaseNode:
     def __init__(
         self, *,
-        descriptor: BaseDescriptor,
+        descriptor: base_descriptor,
         instance,
         dependencies: set[BaseNode] | None = None,
     ) -> None:
@@ -100,7 +99,7 @@ class BaseNode:
     def _make_up_to_date(self) -> None:
         pass
 
-class BaseDescriptor:
+class base_descriptor:
     node_class: type[BaseNode] = BaseNode
 
     def __init__(
@@ -177,12 +176,3 @@ class BaseDescriptor:
             self._set_node_by_name(instance, self._name, node)
 
         return node
-
-class base_descriptor_decorator:
-    descriptor_class: type[BaseDescriptor] = BaseDescriptor
-
-    def __init__(self, default_dependencies_names: set[str] | None = None) -> None:
-        self.default_dependencies_names = default_dependencies_names
-
-    def __call__(self, **kwargs) -> BaseDescriptor:
-        return self.descriptor_class(self.default_dependencies_names, **kwargs)

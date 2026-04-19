@@ -1,9 +1,7 @@
-from .Base import base_descriptor_decorator
-from .BaseStorage import BaseStorageNode, BaseStorageDescriptor
+from .BaseStorage import BaseStorageNode, base_storage_descriptor
 
 __all__ = [
     "UseStateNode",
-    "UseState",
     "use_state",
 ]
 
@@ -30,15 +28,16 @@ class UseStateNode(BaseStorageNode):
 
         self._value = initial_value
 
-class UseState(BaseStorageDescriptor):
+class use_state(base_storage_descriptor):
     """
-    UseState allows manual getting and setting of its value.
+    `use_state` allows manual getting and setting of its value.
 
-    Setting the value manually marks the UseState as up to date.
+    Setting the value manually marks the `use_state` as up to date.
 
-    If one tries to get the value when the UseState is out of date, eg before
-    one has manually assigned a value to the UseState, or because a dependency
-    has been changed, then the function is called to generate a default value.
+    If one tries to get the value when the `use_state` is out of date, eg before
+    one has manually assigned a value to the `use_state`, or because a dependency
+    has been changed, then the decorated function is called to generate a default
+    value.
     """
 
     node_class = UseStateNode
@@ -58,7 +57,15 @@ class UseState(BaseStorageDescriptor):
     def set(self, instance, value):
         self.touch_node(instance).value = value
 
-    def create_default_state(self, *args, **kwargs) -> UseState:
+    def __call__(self, create_default_state_method) -> use_state:
+        """
+        Decorator to wrap the function that returns the default value to be
+        stored in the UseState node if one does not manually assign a value.
+        """
+
+        return self.create_default_state()(create_default_state_method = create_default_state_method)
+
+    def create_default_state(self, *args, **kwargs) -> use_state:
         def wrapper(create_default_state_method):
             ret = self.__class__(
                 self.default_dependencies,
@@ -68,7 +75,7 @@ class UseState(BaseStorageDescriptor):
             return ret
         return wrapper
 
-    def setter(self, *args, **kwargs) -> UseState:
+    def setter(self, *args, **kwargs) -> use_state:
         def wrapper(setter_method):
             ret = self.__class__(
                 self.default_dependencies,
@@ -77,14 +84,3 @@ class UseState(BaseStorageDescriptor):
             )
             return ret
         return wrapper
-
-class use_state(base_descriptor_decorator):
-    """
-    Decorator to wrap the function that returns the default value to be
-    stored in the UseState node if one does not manually assign a value.
-    """
-
-    descriptor_class = UseState
-
-    def __call__(self, create_default_state_method) -> UseState:
-        return super().__call__(create_default_state_method = create_default_state_method)

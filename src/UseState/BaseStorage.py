@@ -1,14 +1,14 @@
-from .Base import BaseNode, BaseDescriptor
+from .Base import BaseNode, base_descriptor
 
 __all__ = [
     "BaseStorageNode",
-    "BaseStorageDescriptor",
+    "base_storage_descriptor",
 ]
 
 class BaseStorageNode(BaseNode):
     def __init__(
         self, *,
-        descriptor: BaseStorageDescriptor,
+        descriptor: base_storage_descriptor,
         instance,
         dependencies: set[BaseNode] | None = None,
     ) -> None:
@@ -29,7 +29,7 @@ class BaseStorageNode(BaseNode):
 
         return self._value
 
-class BaseStorageDescriptor(BaseDescriptor):
+class base_storage_descriptor(base_descriptor):
     node_class = BaseStorageNode
 
     def get(self, instance, owner):

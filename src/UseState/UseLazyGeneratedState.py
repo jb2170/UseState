@@ -1,9 +1,7 @@
-from .Base import base_descriptor_decorator
-from .BaseStorage import BaseStorageNode, BaseStorageDescriptor
+from .BaseStorage import BaseStorageNode, base_storage_descriptor
 
 __all__ = [
     "UseLazyGeneratedStateNode",
-    "UseLazyGeneratedState",
     "use_lazy_generated_state",
 ]
 
@@ -14,9 +12,9 @@ class UseLazyGeneratedStateNode(BaseStorageNode):
 
         self._value = self.descriptor.generate_state_method(self.instance)
 
-class UseLazyGeneratedState(BaseStorageDescriptor):
+class use_lazy_generated_state(base_storage_descriptor):
     """
-    UseLazyGeneratedState allows the getting of its stored value,
+    `use_lazy_generated_state` allows the getting of its stored value,
     which first calls its function if the stored value is out of date
     because a dependency has changed.
     """
@@ -33,13 +31,19 @@ class UseLazyGeneratedState(BaseStorageDescriptor):
 
         self.generate_state_method = generate_state_method
 
-class use_lazy_generated_state(base_descriptor_decorator):
-    """
-    Decorator to wrap the function that generates the value to be
-    stored in the UseLazyGeneratedState node.
-    """
+    def __call__(self, generate_state_method) -> use_lazy_generated_state:
+        """
+        Decorator to wrap the function that generates the value to be
+        stored in the UseLazyGeneratedState node.
+        """
 
-    descriptor_class = UseLazyGeneratedState
+        return self.generate_state()(generate_state_method = generate_state_method)
 
-    def __call__(self, generate_state_method) -> UseLazyGeneratedState:
-        return super().__call__(generate_state_method = generate_state_method)
+    def generate_state(self, *args, **kwargs) -> use_lazy_generated_state:
+        def wrapper(generate_state_method):
+            ret = use_lazy_generated_state(
+                self.default_dependencies,
+                generate_state_method = generate_state_method,
+            )
+            return ret
+        return wrapper
