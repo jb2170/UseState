@@ -28,20 +28,11 @@ class Cylinder:
         self.radius = radius
         self.height = height
 
-    @use_property()
-    def color(self) -> int:
-        print("Calculating default color")
-        return "yellow"
+    color: str = use_property()
 
-    @use_state()
-    def radius(self) -> float:
-        print("Calculating default radius")
-        return 0.0
+    radius: float = use_state()
 
-    @use_state()
-    def height(self) -> float:
-        print("Calculating default height")
-        return 0.0
+    height: float = use_state()
 
     @use_lazy_generated_state({"radius"})
     def area(self) -> float:
